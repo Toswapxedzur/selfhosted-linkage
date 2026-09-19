@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "servers": {
+    "25565": {
+      "name": "My Server",
+      "transport": "iroh",
+      "relay_url": "https://relay.example.com",
+      "ticket": "endpointabkrdsmgbmhubzema6gkozw44kqav6gkcesz7lazs5npqh7kqsvioayadjuhi5dqom5c6l3jojxwqltcnrxxa6lcn54c43tfoqxqcadeprtaza7vamaqbqfiamlyh5id"
+    }
+  }
+}

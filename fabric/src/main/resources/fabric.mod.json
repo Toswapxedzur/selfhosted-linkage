@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "selfhosted_linkage",
+  "version": "${version}",
+  "name": "Selfhosted Linkage",
+  "description": "Join a Minecraft server hosted behind CGNAT through a self-hosted relay: tick one box, enter relay address + port. No VPN app, no port forwarding.",
+  "authors": ["Toswapxedzur"],
+  "license": "MIT",
+  "environment": "client",
+  "entrypoints": {
+    "client": ["net.blopybox.selfhosted_linkage.fabric.LinkageFabricClient"]
+  },
+  "mixins": ["selfhosted_linkage.mixins.json"],
+  "depends": {
+    "fabricloader": ">=0.16.0",
+    "minecraft": "~1.21.1",
+    "java": ">=21"
+  }
+}

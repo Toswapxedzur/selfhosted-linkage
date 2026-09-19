@@ -1,0 +1,16 @@
+architectury {
+    common rootProject.enabled_platforms.split(',')
+}
+
+dependencies {
+    // Only for the @Environment annotation + Mixin at compile time; no other Fabric Loader classes in common.
+    modImplementation "net.fabricmc:fabric-loader:$rootProject.fabric_loader_version"
+}
+
+// Standalone smoke test of the transport core:  ./gradlew :common:coreSmoke -Prelay=127.0.0.1:8099 -Pselector=25565
+tasks.register('coreSmoke', JavaExec) {
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = 'net.blopybox.selfhosted_linkage.core.CoreSmoke'
+    args = [project.findProperty('relay') ?: '127.0.0.1:8099', project.findProperty('selector') ?: '25565',
+            project.findProperty('smokeState') ?: layout.buildDirectory.dir('smoke-state').get().asFile.path]
+}
