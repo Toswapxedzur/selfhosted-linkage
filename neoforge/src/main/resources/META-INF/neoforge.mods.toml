@@ -1,0 +1,29 @@
+modLoader = "javafml"
+loaderVersion = "[4,)"
+license = "MIT"
+
+[[mods]]
+modId = "selfhosted_linkage"
+version = "${version}"
+displayName = "Selfhosted Linkage"
+authors = "Toswapxedzur"
+description = '''
+Join a Minecraft server hosted behind CGNAT through a self-hosted relay: tick one box, enter relay address + port. No VPN app, no port forwarding.
+'''
+
+[[mixins]]
+config = "selfhosted_linkage.mixins.json"
+
+[[dependencies.selfhosted_linkage]]
+modId = "neoforge"
+type = "required"
+versionRange = "[21.1,)"
+ordering = "NONE"
+side = "CLIENT"
+
+[[dependencies.selfhosted_linkage]]
+modId = "minecraft"
+type = "required"
+versionRange = "[1.21.1]"
+ordering = "NONE"
+side = "CLIENT"

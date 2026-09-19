@@ -1,0 +1,11 @@
+http_bind_addr = "127.0.0.1:3340"
+enable_quic_addr_discovery = true
+enable_metrics = false
+
+[tls]
+hostname = "relay.example.com"
+cert_mode = "Manual"
+manual_cert_path = "/etc/iroh-relay/tls/relay.example.com.crt"
+manual_key_path = "/etc/iroh-relay/tls/relay.example.com.key"
+https_bind_addr = "127.0.0.1:3341"
+quic_bind_addr = "0.0.0.0:7842"

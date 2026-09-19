@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Selfhosted Linkage — join a home Minecraft server, no port forwarding</title>
+<meta name="description" content="Let friends join your home Minecraft server even behind CGNAT. They install one modpack — no VPN app, no account, no router settings.">
+<link rel="icon" href="icon.svg">
+<style>
+:root{--paper:#F1E7CB;--paper2:#F9F1DB;--ink:#332F28;--muted:#7a7060;--orange:#F58A2B;--deep:#C0620F;--tint:#FBE6C9}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 17px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:720px;margin:0 auto;padding:0 20px}
+h1,h2,h3{font-family:Georgia,"Iowan Old Style","Times New Roman",serif;font-weight:600;line-height:1.25;color:var(--ink)}
+h2{font-size:27px;margin:56px 0 14px}
+h3{font-size:20px;margin:28px 0 8px}
+p{margin:0 0 16px}
+a{color:var(--deep);text-decoration:none}
+a:hover{text-decoration:underline}
+code{font:500 14px/1.45 ui-monospace,SFMono-Regular,Menlo,monospace;color:#8a4708}
+strong{font-weight:600}
+.muted,.note{color:var(--muted)}
+.note{font-size:15px}
+header{text-align:center;padding:48px 0 8px}
+header img{width:104px;height:104px}
+header h1{font-size:44px;margin:18px 0 6px}
+.tag{font-size:20px;color:var(--muted);max-width:560px;margin:0 auto}
+.btns{display:flex;flex-wrap:wrap;gap:26px;justify-content:center;margin:24px 0}
+.btn{font-weight:600;font-size:18px;color:var(--deep)}
+.dl{margin:26px 0}
+.dl p{margin:6px 0}
+.sep{color:var(--muted);margin:0 8px}
+.link{font-weight:600;color:var(--deep)}
+select{font:inherit;font-weight:600;color:var(--deep);background:var(--tint);border:none;border-radius:8px;padding:3px 8px;cursor:pointer}
+#alllist p{margin:6px 0}
+.rule{background:var(--tint);border-radius:12px;padding:14px 18px;margin:18px 0}
+ul,ol{padding-left:22px;margin:0 0 16px}
+li{margin:6px 0}
+table{width:100%;border-collapse:collapse;margin:16px 0;font-size:15px}
+th,td{padding:7px 16px 7px 0;text-align:left;vertical-align:top}
+th{font-weight:600}
+td.no{color:#a23a1a}td.yes{color:#2f7d33;font-weight:600}
+details{margin:14px 0}
+summary{cursor:pointer;font-weight:600;padding:8px 0;list-style:none;color:var(--deep)}
+summary::-webkit-details-marker{display:none}
+summary::before{content:"▸ "}
+details[open] summary::before{content:"▾ "}
+pre{background:#332f28;color:#f3ead4;border-radius:10px;padding:14px 16px;overflow:auto;font:500 13.5px/1.6 ui-monospace,Menlo,monospace}
+pre code{color:inherit}
+svg{max-width:100%;height:auto;display:block;margin:8px auto}
+footer{margin-top:60px;padding:26px 0 60px;color:var(--muted);font-size:14px;text-align:center}
+@media(max-width:560px){header h1{font-size:34px}h2{font-size:23px}body{font-size:16px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <img src="icon.svg" alt="Selfhosted Linkage icon">
+  <h1>Selfhosted Linkage</h1>
+  <p class="tag">Run a Minecraft server on your own PC and let friends join — even when port forwarding won't work. Your friends just install the modpack. No VPN app, no account, nothing to configure.</p>
+  <div class="btns">
+    <a class="btn" href="#downloads">Get the mod</a>
+    <a class="btn" href="#problem">Why can't my friends join?</a>
+  </div>
+</header>
+
+<section class="dl" id="downloads">
+  <h3>Downloads</h3>
+  <p class="note">Players only need the mod. Pick your Minecraft version and loader:</p>
+  <p>Minecraft <select id="mcsel" aria-label="Minecraft version"></select><label class="note" style="margin-left:12px"><input type="checkbox" id="prerel"> include pre-release builds</label></p>
+  <p id="latest" class="note">Loading versions…</p>
+  <details id="allwrap"><summary>All versions</summary><div id="alllist"></div></details>
+  <noscript><p><a class="link" href="dl/selfhosted-linkage-fabric-0.1.0-alpha+mc1.21.1.jar">Mod for Fabric</a><span class="sep">·</span><a class="link" href="dl/selfhosted-linkage-neoforge-0.1.0-alpha+mc1.21.1.jar">Mod for NeoForge</a> <span class="note">(0.1.0-alpha · MC 1.21.1)</span></p></noscript>
+  <p class="note" style="margin-top:14px">Hosting a server? Home agent (public mode — no VPS):</p>
+  <p><a class="link" href="dl/linkage-server-macos-arm64.tar.gz">macOS (Apple Silicon)</a><span class="sep">·</span><a class="link" href="dl/linkage-server-macos-x64.tar.gz">macOS (Intel)</a><span class="sep">·</span><a class="link" href="dl/linkage-server-linux-x64.tar.gz">Linux</a></p>
+  <p><a class="link" href="dl/linkage-relay-install.sh">Relay installer</a> <span class="note">(optional, self-hosted mode)</span><span class="sep">·</span><a class="link" href="dl/checksums.txt">checksums</a></p>
+</section>
+
+<h2 id="problem">The problem</h2>
+<p>If you're reading this, you probably already did everything right: you set up a server, it runs fine on your own computer, friends on the same Wi-Fi can join — but friends over the internet can't, and the "port forwarding" step from the tutorial just doesn't work. <strong>This is almost never your fault.</strong></p>
+<p><strong>A 60-second recap of how joining is <em>supposed</em> to work.</strong> Your home has one address on the internet, your <strong>public IP</strong> (like a street address). Your server waits behind a numbered "door" called a <strong>port</strong> (25565). The tutorial had you set up <strong>port forwarding</strong> on your router — "send connections on port 25565 to my PC" — and give friends your IP. Their game connects to <code>your-IP:25565</code>, and that's it.</p>
+<p><strong>Why it fails today:</strong> the internet ran out of the old address type (IPv4), so most home ISPs stopped giving each customer their own. Instead they put you behind <strong>CGNAT</strong> — hundreds of homes <em>share</em> one public IP, inside the ISP's equipment you can't touch. So forwarding a port on your router does nothing: the address the world sees isn't yours. You can follow every tutorial perfectly and it still won't work, because the problem is upstream at your ISP.</p>
+<p class="note"><strong>How to confirm:</strong> check your router's "WAN" IP. If it starts with <code>100.64.</code>–<code>100.127.</code>, that's a shared CGNAT address. Or if an "open port check" site never sees your server, same conclusion.</p>
+
+<details>
+<summary>"Is this a static-vs-dynamic IP thing?" (no)</summary>
+<p>A <strong>dynamic</strong> IP just changes now and then — a free DDNS service follows it, no problem. The blocker is having <strong>no public IPv4 of your own at all</strong>, which is what CGNAT means. Static vs dynamic doesn't matter here.</p>
+</details>
+
+<details>
+<summary>Try IPv6 first — it might already be free</summary>
+<p><strong>IPv6</strong> is the new, effectively unlimited kind of address, and many ISPs that CGNAT your IPv4 still give you a real, public IPv6.</p>
+<ol>
+<li>On the server machine, open <a href="https://test-ipv6.com">test-ipv6.com</a> — do you have public IPv6?</li>
+<li>If yes: allow the server through your router's <strong>IPv6 firewall</strong> and point a DDNS <strong>AAAA</strong> record at it. Minecraft: Java Edition speaks IPv6.</li>
+</ol>
+<p>Two catches: a friend who only has IPv4 <strong>cannot</strong> reach an IPv6-only server (still common), and some ISPs rotate your IPv6 prefix. If IPv6 doesn't cover everyone, read on.</p>
+</details>
+
+<h2>Existing solutions</h2>
+<p>Two established approaches get around the address problem. Both work; each has a cost.</p>
+<h3>Tunnels &amp; proxies — e.g. playit.gg</h3>
+<p>You run a small program that opens a tunnel to the provider; they give you a public address and <strong>relay all traffic through their servers</strong> to your PC.</p>
+<ul>
+<li><strong>Good:</strong> the simplest setup there is — nothing on your router, works behind any CGNAT.</li>
+<li><strong>Cost:</strong> every packet goes through a middleman, so speed and lag depend on <em>their</em> network, never a direct connection. Free tier is limited (~$3/mo to raise it) and needs an account.</li>
+</ul>
+<h3>Overlay VPNs — e.g. Tailscale, ZeroTier</h3>
+<p>A "VPN" here means a <strong>private virtual network</strong>. You install their app on each machine; they form a little network so your friend's PC and your server act like one LAN.</p>
+<ul>
+<li><strong>Good:</strong> very good at <strong>direct</strong> connections; free even for a large group (Tailscale: 6 users, unlimited devices, and one shared machine can be handed to ~1,000 people); a shared friend reaches only that one machine.</li>
+<li><strong>Cost:</strong> everyone needs an <strong>account</strong> and must install the <strong>app</strong>; and you're running a whole VPN just to play one server.</li>
+</ul>
+
+<table>
+<tr><th></th><th>playit.gg</th><th>Tailscale / ZeroTier</th><th>Selfhosted Linkage</th></tr>
+<tr><td>Works behind CGNAT</td><td class="yes">yes</td><td class="yes">yes</td><td class="yes">yes</td></tr>
+<tr><td>Direct (low-latency)</td><td class="no">no — always relayed</td><td class="yes">yes</td><td class="yes">yes</td></tr>
+<tr><td>Account / login</td><td class="no">required</td><td class="no">required</td><td class="yes">none</td></tr>
+<tr><td>Extra app to install</td><td>a client</td><td>a VPN client</td><td class="yes">none — it's in the modpack</td></tr>
+<tr><td>Scope</td><td>one port</td><td>a whole network</td><td class="yes">one port</td></tr>
+</table>
+
+<h2>Direct vs relay</h2>
+<p>Every peer-to-peer option here — Tailscale, ZeroTier, and ours — works the same way underneath, and it decides whether you ever spend money.</p>
+
+<svg viewBox="0 0 680 250" role="img" aria-label="A friend connects directly to the home server most of the time, or through a relay when direct is blocked.">
+  <defs><marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M2 1 L8 5 L2 9" fill="none" stroke="#33302A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></marker>
+  <marker id="ao" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M2 1 L8 5 L2 9" fill="none" stroke="#B37536" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+  <rect x="30" y="150" width="180" height="66" rx="13" fill="#F6DDB8"/>
+  <text x="120" y="180" text-anchor="middle" font-family="Georgia,serif" font-size="16" fill="#332F28">Your friend</text>
+  <text x="120" y="200" text-anchor="middle" font-size="12.5" fill="#7a7060">the modpack</text>
+  <rect x="470" y="150" width="180" height="66" rx="13" fill="#F58A2B"/>
+  <text x="560" y="180" text-anchor="middle" font-family="Georgia,serif" font-size="16" fill="#fff">Your home PC</text>
+  <text x="560" y="200" text-anchor="middle" font-size="12.5" fill="#fbe6c9">agent → MC server</text>
+  <line x1="212" y1="183" x2="468" y2="183" stroke="#33302A" stroke-width="2.4" marker-start="url(#ah)" marker-end="url(#ah)"/>
+  <text x="340" y="174" text-anchor="middle" font-size="13.5" fill="#33302A" font-weight="600">direct · peer-to-peer (≈9 of 10)</text>
+  <rect x="270" y="26" width="140" height="58" rx="13" fill="#F9F1DB" stroke="#D9C69B" stroke-dasharray="5 4"/>
+  <text x="340" y="52" text-anchor="middle" font-family="Georgia,serif" font-size="15" fill="#7a7060">relay</text>
+  <text x="340" y="70" text-anchor="middle" font-size="11.5" fill="#7a7060">only if blocked</text>
+  <path d="M150 150 C170 110 220 90 270 70" fill="none" stroke="#B37536" stroke-width="2" stroke-dasharray="5 5" marker-end="url(#ao)"/>
+  <path d="M530 150 C510 110 460 90 410 70" fill="none" stroke="#B37536" stroke-width="2" stroke-dasharray="5 5" marker-end="url(#ao)"/>
+</svg>
+
+<p><strong>The catch:</strong> the <em>free public</em> relays are shared and rate-limited — equally true of Tailscale's relays and the free relays our public mode uses. A <strong>direct</strong> connection is fast; a <strong>relayed</strong> one over free infrastructure can feel laggy.</p>
+<div class="rule">
+<strong>The rule that decides everything:</strong>
+<ul style="margin:8px 0 0">
+<li>Friends connect <strong>directly</strong> and nobody lags → the free path is all you'll ever need. Spend nothing.</li>
+<li>One friend is <strong>consistently relayed and laggy</strong> → put a relay near them by renting a cheap VPS (self-hosted mode, below).</li>
+</ul>
+</div>
+
+<h2>Our approach</h2>
+<p>Selfhosted Linkage keeps the good part — Tailscale-class direct connections — and drops the friction. It uses <a href="https://iroh.computer">iroh</a>, peer-to-peer networking from the same family as Tailscale's, but built <strong>into the mod</strong>, not as a separate VPN.</p>
+<ul>
+<li><strong>No account.</strong> Your server makes its own <strong>public key</strong> — a long random ID that <em>is</em> its identity. Friends dial that key. Nothing stores accounts; it's stateless.</li>
+<li><strong>Nothing extra to install.</strong> The networking lives inside the modpack your friends already install — tick a box, paste a key.</li>
+<li><strong>Direct first,</strong> relay only as fallback. <strong>Only your server</strong> is exposed — one port, not your machine.</li>
+<li><strong>One download</strong> covers Windows, macOS (Intel &amp; Apple Silicon) and Linux. Any modpack, any online-mode.</li>
+</ul>
+
+<h2>Public mode — the easy way</h2>
+<p>For almost everyone, this is the whole thing: no server to rent, no account.</p>
+<h3>You (the host) — once</h3>
+<ol>
+<li>Download the host agent for your OS (above) and run it next to your server.</li>
+<li>It prints your server's <strong>public key</strong>.</li>
+<li>Send that key to your friends, with your port (usually 25565).</li>
+</ol>
+<h3>Your friends — every time</h3>
+<ol>
+<li>Install the modpack (the mod's already inside — one file).</li>
+<li>Multiplayer → <strong>Add Server</strong> → tick <strong>"Selfhosted Linkage."</strong></li>
+<li>Paste your <strong>public key</strong> as the address, the <strong>port</strong> in the port box → Join.</li>
+</ol>
+<div class="rule note"><strong>Players far from the relays (e.g. in China):</strong> public mode still works, and <em>direct</em> connections are just as fast anywhere. Only the occasional <em>relayed</em> connection is slower, since the free relays are abroad. If one friend is always relayed and laggy, the next section is your fix.</div>
+
+<h2>Self-hosted mode — advanced, only if a friend lags</h2>
+<p>Skip this unless the rule above sent you here. The fix is to run your own relay <strong>near that friend</strong>. It costs a few dollars a month.</p>
+<h3>What's a VPS?</h3>
+<p>A <strong>VPS</strong> is a small computer you rent by the month, running in a datacenter, <strong>always on with its own public address</strong> — the thing your home connection lacks. You control it over a secure remote connection called <strong>SSH</strong>. For a relay it does one light job, so the cheapest one is plenty.</p>
+<h3>What to look for</h3>
+<p>Any provider works — we don't endorse one. Two things matter:</p>
+<ul>
+<li><strong>Location:</strong> the relay only helps if it's <strong>near the friend who needs it.</strong> Pick a region close to them.</li>
+<li><strong>Bandwidth:</strong> the relay passes game traffic, so choose a plan with a generous data allowance — avoid ultra-cheap plans with tiny transfer caps.</li>
+</ul>
+<p>The cheapest CPU/RAM tier is fine. Choose <strong>Ubuntu</strong> (22.04 or 24.04). You also need a name for it: point a subdomain from a cheap domain (any registrar) at the VPS's IP, or use a free <strong>DuckDNS</strong> subdomain — the HTTPS certificate is obtained automatically.</p>
+
+<details>
+<summary>The full setup — copy-paste commands</summary>
+<p>VPS IP <code>203.0.113.10</code>, name <code>relay.example.com</code> pointed at it, home server on port 25565.</p>
+<p><strong>On the VPS</strong> (<code>ssh root@203.0.113.10</code>):</p>
+<pre><code># 1. install Caddy (handles the HTTPS certificate automatically)
+sudo apt update &amp;&amp; sudo apt install -y debian-keyring debian-archive-keyring apt-transport-https curl
+curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | sudo gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg
+curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' | sudo tee /etc/apt/sources.list.d/caddy-stable.list
+sudo apt update &amp;&amp; sudo apt install -y caddy
+
+# 2. run the one-line relay installer
+curl -fsSL https://linkage.blopybox.net/dl/linkage-relay-install.sh -o install.sh
+sudo bash install.sh relay.example.com</code></pre>
+<p>Then, in your <strong>VPS provider's firewall panel</strong>, allow inbound <strong>UDP 7842</strong>.</p>
+<p><strong>On your home server</strong> (from the host agent bundle):</p>
+<pre><code>sudo ./install.sh --relay-url https://relay.example.com --mc-addr 127.0.0.1:25565</code></pre>
+<p>It prints a <strong>ticket</strong>. Paste it once into the registry file the installer created on the VPS:</p>
+<pre><code># /etc/iroh-relay/webroot/.well-known/selfhosted-linkage.json
+{ "version": 1, "servers": { "25565": { "transport": "iroh",
+    "relay_url": "https://relay.example.com", "ticket": "PASTE-THE-TICKET-HERE" } } }</code></pre>
+<p>The key is saved, so the ticket stays the same across restarts. Friends then type <code>relay.example.com</code> as the address and <code>25565</code> as the port. Direct connections still happen automatically; when someone can't go direct, they bounce through <em>your</em> nearby relay.</p>
+</details>
+<p class="note">Self-hosted mode is entirely yours to run — not a service we operate for anyone.</p>
+
+<h2>What you install</h2>
+<ul>
+<li><strong>Players:</strong> one mod jar (Fabric or NeoForge) — nothing else.</li>
+<li><strong>Host (public mode):</strong> a small agent that runs in the background and prints your key.</li>
+<li><strong>Host (self-hosted, optional):</strong> a one-line installer for the Ubuntu VPS relay.</li>
+</ul>
+<p class="note">Everything is open source, and the networking is a thin wrapper over the stock <a href="https://iroh.computer">iroh</a> tools.</p>
+
+</div>
+<footer>
+<div class="wrap">
+<p>Open source (MIT / Apache-2.0) · built on <a href="https://iroh.computer">iroh</a> and <a href="https://github.com/n0-computer/dumbpipe">dumbpipe</a>.</p>
+<p>Not an official Minecraft product. Not approved by or associated with Mojang or Microsoft.</p>
+</div>
+</footer>
+<script>
+(function(){
+  var FALLBACK='<a class="link" href="dl/selfhosted-linkage-fabric-0.1.0-alpha+mc1.21.1.jar">Mod for Fabric</a><span class="sep">·</span><a class="link" href="dl/selfhosted-linkage-neoforge-0.1.0-alpha+mc1.21.1.jar">Mod for NeoForge</a> <span class="note">(0.1.0-alpha · MC 1.21.1)</span>';
+  function jar(r,l){return '<a class="link" href="'+r[l].file+'">Mod for '+(l==='fabric'?'Fabric':'NeoForge')+'</a>';}
+  fetch('releases.json').then(function(r){return r.json();}).then(function(m){
+    var rels=(m.releases||[]);
+    var sel=document.getElementById('mcsel'), pre=document.getElementById('prerel'),
+        L=document.getElementById('latest'), box=document.getElementById('alllist');
+    Array.from(new Set(rels.map(function(r){return r.mc;}))).sort().reverse().forEach(function(v){
+      var o=document.createElement('option'); o.value=v; o.textContent=v; sel.appendChild(o);
+    });
+    function render(){
+      var mc=sel.value, incl=pre.checked;
+      var list=rels.filter(function(r){return r.mc===mc;});
+      var hasStable=list.some(function(r){return r.channel==='release';});
+      var pool=(incl||!hasStable)?list:list.filter(function(r){return r.channel==='release';});
+      var latest=null; ['release','beta','alpha'].some(function(ch){latest=pool.find(function(r){return r.channel===ch;});return !!latest;});
+      L.innerHTML=latest?('<strong>Latest — '+latest.version+'</strong> for MC '+latest.mc+' · '+jar(latest,'fabric')+'<span class="sep">·</span>'+jar(latest,'neoforge')+(latest.channel!=='release'?' <span class="note">('+latest.channel+')</span>':'')):'No build for this version yet.';
+      box.innerHTML='';
+      pool.forEach(function(r){var p=document.createElement('p');
+        p.innerHTML='<strong>'+r.version+'</strong> <span class="note">· '+r.channel+' · '+r.date+'</span> · '+jar(r,'fabric')+'<span class="sep">·</span>'+jar(r,'neoforge');
+        box.appendChild(p);});
+    }
+    sel.addEventListener('change',render); pre.addEventListener('change',render); render();
+  }).catch(function(){ document.getElementById('latest').innerHTML=FALLBACK; });
+})();
+</script>
+</body>
+</html>

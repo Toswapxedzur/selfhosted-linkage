@@ -1,0 +1,21 @@
+.gradle/
+build/
+run/
+bin/
+out/
+.idea/
+*.iml
+.vscode/
+.architectury-transformer/
+.DS_Store
+# never commit helper runtime state / keys
+**/nbspike/
+*.sock
+*.log
+spike/*.class
+linkage-iroh/target/
+linkage-server/iroh-secret
+linkage-server/linkage-iroh
+linkage-server/*.log
+common/src/main/resources/helpers/
+dist/

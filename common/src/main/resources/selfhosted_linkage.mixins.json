@@ -1,0 +1,16 @@
+{
+  "required": true,
+  "package": "net.blopybox.selfhosted_linkage.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "minVersion": "0.8",
+  "client": [
+    "ClientPacketListenerMixin",
+    "ConnectScreenMixin",
+    "DirectJoinServerScreenMixin",
+    "EditServerScreenMixin",
+    "JoinMultiplayerScreenMixin",
+    "MinecraftMixin",
+    "TitleScreenMixin"
+  ],
+  "injectors": { "defaultRequire": 1 }
+}

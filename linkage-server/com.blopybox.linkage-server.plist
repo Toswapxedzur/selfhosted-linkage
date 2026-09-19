@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!-- macOS LaunchDaemon for the home linkage agent. Install: sudo cp to
+     /Library/LaunchDaemons/, set UserName + paths, then `sudo launchctl load`. -->
+<plist version="1.0"><dict>
+  <key>Label</key><string>com.blopybox.linkage-server</string>
+  <key>UserName</key><string>__USER__</string>
+  <key>ProgramArguments</key>
+    <array><string>/bin/sh</string><string>__HOME__/linkage-server/run-agent.sh</string></array>
+  <key>RunAtLoad</key><true/>
+  <key>KeepAlive</key><true/>
+  <key>StandardOutPath</key><string>__HOME__/linkage-server/listen.log</string>
+  <key>StandardErrorPath</key><string>__HOME__/linkage-server/listen.log</string>
+</dict></plist>
